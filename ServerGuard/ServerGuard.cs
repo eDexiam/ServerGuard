@@ -14,7 +14,6 @@ namespace ServerGuard
 		name = "ServerGuard",
 		description = "A global banning system for troublemakers",
 		id = "lucas.serverguard.plugin",
-		configPrefix = "gb",
 		version = "1.1",
 		SmodMajor = 3,
 		SmodMinor = 4,
@@ -35,6 +34,7 @@ namespace ServerGuard
 		public override void Register()
 		{
 			this.AddEventHandlers(new RoundEventHandler(this));
+            this.AddConfig(new ConfigSetting("sg_webhookurl", "", true, "The webhook URL for Discord logging"));
 		}
 	}
 }

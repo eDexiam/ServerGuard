@@ -34,7 +34,22 @@ namespace ServerGuard
                         return;
                     }
                 }
-            }                
+            }
+
+            if(plugin.GetConfigString("gb_webhookurl").Length > 0)
+            {
+                using (WebClient webclient = new WebClient())
+                {
+                    webclient.Headers[HttpRequestHeader.ContentType] = "application/json";
+                    WebhookGeneration jsondata = new WebhookGeneration();
+                    jsondata.content = "Warning! A troublemaker has been detected! " + ev.Player.Name + "(" + ev.Player.SteamId + ")";
+                    string json = JsonConvert.SerializeObject(jsondata);
+                    webclient.UploadString(plugin.GetConfigString("gb_webhookurl"), "POST", json);
+                    plugin.Info("Webhook sent");
+                    // return;
+                }
+            }
+
             DataRead userdata = JsonConvert.DeserializeObject<DataRead>(result);
             if(userdata.isbanned)
             {
@@ -49,6 +64,10 @@ namespace ServerGuard
             // public string IPAdress;
             public string Reason;
             public bool isbanned;
+        }
+        class WebhookGeneration
+        {
+            public string content;
         }
     }
 }
