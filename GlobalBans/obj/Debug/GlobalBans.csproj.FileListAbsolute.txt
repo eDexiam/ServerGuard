@@ -1,0 +1,6 @@
+C:\Users\Lucas\Desktop\Global Bans\GlobalBans\obj\Debug\GlobalBans.csproj.CoreCompileInputs.cache
+C:\Users\Lucas\Desktop\Global Bans\Builds\ExamplePlugin.dll
+C:\Users\Lucas\Desktop\Global Bans\Builds\ExamplePlugin.pdb
+C:\Users\Lucas\Desktop\Global Bans\GlobalBans\obj\Debug\GlobalBans.csproj.CopyComplete
+C:\Users\Lucas\Desktop\Global Bans\GlobalBans\obj\Debug\ExamplePlugin.dll
+C:\Users\Lucas\Desktop\Global Bans\GlobalBans\obj\Debug\ExamplePlugin.pdb
