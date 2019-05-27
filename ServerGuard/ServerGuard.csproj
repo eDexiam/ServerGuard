@@ -34,16 +34,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\Serveur SCPSL\SCPSLGamemodes-2.0.0-gmm\References\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Serveur SCPSL\SCPSLGamemodes-2.0.0-gmm\References\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\Serveur SCPSL\SCPSLGamemodes-2.0.0-gmm\References\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Serveur SCPSL\SCPSLGamemodes-2.0.0-gmm\References\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Smod2">
-      <HintPath>..\..\Serveur SCPSL\Event-Admin-Plugin-1.8.1\References\Smod2.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Serveur SCPSL\Temporary Access\SCPSL-Gamemode-Manager-joker-test\Smod2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,8 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RoundEventHandler.cs" />
-    <Compile Include="GlobalBans.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerGuard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

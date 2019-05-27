@@ -11,11 +11,11 @@ namespace ServerGuard
 {
 	[PluginDetails( // Don't touch that, IM WATCHING YOU
 		author = "lucasboss45",
-		name = "GlobalBans",
+		name = "ServerGuard",
 		description = "A global banning system for troublemakers",
-		id = "lucas.globalban.plugin",
+		id = "lucas.serverguard.plugin",
 		configPrefix = "gb",
-		version = "1.0",
+		version = "1.1",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0

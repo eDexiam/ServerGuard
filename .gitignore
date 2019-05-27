@@ -11,3 +11,9 @@ GlobalBans/obj/Debug/GlobalBans.csproj.CoreCompileInputs.cache
 ServerGuard/.vs/ServerGuard/v16/Server/sqlite3/storage.ide
 ServerGuard/.vs/ServerGuard/v16/Server/sqlite3/storage.ide-shm
 ServerGuard/.vs/ServerGuard/v16/Server/sqlite3/storage.ide-wal
+ServerGuard/obj/Debug/ServerGuard.csproj.FileListAbsolute.txt
+*.dll
+Builds/GlobalBans.pdb
+Builds/Newtonsoft.Json.xml
+ServerGuard/obj/Debug/GlobalBans.pdb
+ServerGuard/obj/Debug/ServerGuard.csproj.CopyComplete
