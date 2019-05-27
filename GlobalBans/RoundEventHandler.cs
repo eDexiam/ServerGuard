@@ -10,25 +10,39 @@ namespace GlobalBans
 	class RoundEventHandler : IEventHandlerPlayerJoin
 	{
 		private readonly GlobalBans plugin;
+        private string result;
 
 		public RoundEventHandler(GlobalBans plugin) => this.plugin = plugin;
 
         public void OnPlayerJoin(PlayerJoinEvent ev)
         {
-            string result;
-            using (var client = new WebClient())
+            plugin.Info("Checking data for " + ev.Player.Name);
+            try
             {
-                result = client.DownloadString("http://151.80.185.9/" + ev.Player.SteamId + ".json"); // Gets the data from the server
-            }
-            if(result == null)
+                using (var client = new WebClient())
+                {
+                    result = client.DownloadString("http://151.80.185.9/" + ev.Player.SteamId + ".json"); // Gets the data from the server
+                }
+            } catch(WebException ex)
             {
-                plugin.Info("No data found for " + ev.Player.Name + " skipping...");
-            }
+                if(ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
+                {
+                    var resp = (HttpWebResponse)ex.Response;
+                    if(resp.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        plugin.Info("No data found for " + ev.Player.Name + " skipping...");
+                        return;
+                    }
+                }
+            }                
             DataRead userdata = JsonConvert.DeserializeObject<DataRead>(result);
             if(userdata.isbanned)
             {
                 ev.Player.Disconnect("You have been global banned (Global Banning Plugin Only)");
+                plugin.Info("Player is in list, ejecting...");
+                return;
             }
+            plugin.Info("Player is not banned");
         }
         class DataRead
         {
