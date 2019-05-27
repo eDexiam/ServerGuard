@@ -7,7 +7,7 @@ using Smod2.Events;
 using Smod2.Lang;
 using Smod2.Piping;
 
-namespace GlobalBans
+namespace ServerGuard
 {
 	[PluginDetails( // Don't touch that, IM WATCHING YOU
 		author = "lucasboss45",
@@ -20,7 +20,7 @@ namespace GlobalBans
 		SmodMinor = 4,
 		SmodRevision = 0
 		)]
-	public class GlobalBans : Plugin
+	public class ServerGuard : Plugin
 	{
 		public override void OnDisable()
 		{

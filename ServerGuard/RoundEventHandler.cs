@@ -5,14 +5,14 @@ using Smod2.Events;
 using System.Net;
 using Newtonsoft.Json;
 
-namespace GlobalBans
+namespace ServerGuard
 {
 	class RoundEventHandler : IEventHandlerPlayerJoin
 	{
-		private readonly GlobalBans plugin;
+		private readonly ServerGuard plugin;
         private string result;
 
-		public RoundEventHandler(GlobalBans plugin) => this.plugin = plugin;
+		public RoundEventHandler(ServerGuard plugin) => this.plugin = plugin;
 
         public void OnPlayerJoin(PlayerJoinEvent ev)
         {
@@ -38,7 +38,7 @@ namespace GlobalBans
             DataRead userdata = JsonConvert.DeserializeObject<DataRead>(result);
             if(userdata.isbanned)
             {
-                ev.Player.Disconnect("You have been global banned (Global Banning Plugin Only)");
+                ev.Player.Disconnect("You are banned by ServerGuard.");
                 plugin.Info("Player is in list, ejecting...");
                 return;
             }
