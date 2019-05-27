@@ -36,7 +36,7 @@ namespace ServerGuard
                 }
             }
 
-            if(plugin.GetConfigString("gb_webhookurl").Length > 0)
+            if(plugin.GetConfigString("sg_webhookurl").Length > 0)
             {
                 using (WebClient webclient = new WebClient())
                 {
@@ -44,7 +44,7 @@ namespace ServerGuard
                     WebhookGeneration jsondata = new WebhookGeneration();
                     jsondata.content = "Warning! A troublemaker has been detected! " + ev.Player.Name + "(" + ev.Player.SteamId + ")";
                     string json = JsonConvert.SerializeObject(jsondata);
-                    webclient.UploadString(plugin.GetConfigString("gb_webhookurl"), "POST", json);
+                    webclient.UploadString(plugin.GetConfigString("sg_webhookurl"), "POST", json);
                     plugin.Info("Webhook sent");
                     // return;
                 }
