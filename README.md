@@ -10,3 +10,7 @@ It checks if a the user is in a ban database and kicks them if they are
 
 Configs? Not yet.
 Translations? Yes! Feel free to help with translations if you'd like!
+
+# How to report people to be banned like this?
+
+Right now the only way you can report players is by hopping on the Discord for this plugin! https://discord.gg/NDeZzyz
