@@ -4,6 +4,7 @@ using Smod2.EventHandlers;
 using Smod2.Events;
 using System.Net;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace ServerGuard
 {
@@ -13,7 +14,6 @@ namespace ServerGuard
         private string result;
 
 		public RoundEventHandler(ServerGuard plugin) => this.plugin = plugin;
-
         public void OnPlayerJoin(PlayerJoinEvent ev)
         {
             plugin.Info("Checking data for " + ev.Player.Name);
@@ -21,7 +21,8 @@ namespace ServerGuard
             {
                 using (var client = new WebClient())
                 {
-                    result = client.DownloadString("http://151.80.185.9/" + ev.Player.SteamId + ".json"); // Gets the data from the server
+                    result = client.DownloadString("http://151.80.185.9/?steamid=" + ev.Player.SteamId); // Gets the data from the server
+                    plugin.Info("Printing data" + result);
                 }
             } catch(WebException ex)
             {
@@ -32,21 +33,11 @@ namespace ServerGuard
                     {
                         plugin.Info("No data found for " + ev.Player.Name + " skipping...");
                         return;
+                    } else
+                    {
+                        plugin.Error("Database error");
                     }
-                }
-            }
-
-            if(plugin.GetConfigString("sg_webhookurl").Length > 0)
-            {
-                using (WebClient webclient = new WebClient())
-                {
-                    webclient.Headers[HttpRequestHeader.ContentType] = "application/json";
-                    WebhookGeneration jsondata = new WebhookGeneration();
-                    jsondata.content = "Warning! A troublemaker has been detected! " + ev.Player.Name + "(" + ev.Player.SteamId + ")";
-                    string json = JsonConvert.SerializeObject(jsondata);
-                    webclient.UploadString(plugin.GetConfigString("sg_webhookurl"), "POST", json);
-                    plugin.Info("Webhook sent");
-                    // return;
+                    
                 }
             }
 
@@ -58,6 +49,32 @@ namespace ServerGuard
                 return;
             }
             plugin.Info("Player is not banned");
+
+            if (plugin.GetConfigList("sg_notifyroles").Length != 0)
+            {
+                foreach (Player player in plugin.Server.GetPlayers())
+                {
+                    if (plugin.GetConfigList("sg_notifyroles").Contains(player.GetRankName()))
+                    {
+                        player.PersonalBroadcast(5, "Warning troublemaker detected. Name: " + player.Name, false);
+                    }
+                }
+            }
+
+            if (plugin.GetConfigString("sg_webhookurl").Length > 0 )
+            {
+                using (WebClient webclient = new WebClient())
+                {
+                    if (!userdata.isbanned) return;
+                    webclient.Headers[HttpRequestHeader.ContentType] = "application/json";
+                    WebhookGeneration jsondata = new WebhookGeneration();
+                    jsondata.content = "Warning! A troublemaker has been detected! " + ev.Player.Name + " (" + ev.Player.SteamId + ")";
+                    string json = JsonConvert.SerializeObject(jsondata);
+                    webclient.UploadString(plugin.GetConfigString("sg_webhookurl"), "POST", json);
+                    plugin.Info("Webhook sent");
+                    // return;
+                }
+            }
         }
         class DataRead
         {
