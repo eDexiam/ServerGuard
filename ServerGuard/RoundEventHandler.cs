@@ -44,7 +44,7 @@ namespace ServerGuard
             DataRead userdata = JsonConvert.DeserializeObject<DataRead>(result);
             if(userdata.isbanned)
             {
-                ev.Player.Disconnect("You are banned by ServerGuard.");
+                ev.Player.Disconnect(plugin.GetTranslation("kickmessage"));
                 plugin.Info("Player is in list, ejecting...");
                 return;
             }
@@ -56,7 +56,7 @@ namespace ServerGuard
                 {
                     if (plugin.GetConfigList("sg_notifyroles").Contains(player.GetRankName()))
                     {
-                        player.PersonalBroadcast(5, "Warning troublemaker detected. Name: " + player.Name, false);
+                        player.PersonalBroadcast(5, plugin.GetTranslation("ingamemsg") + " " + player.Name, false);
                     }
                 }
             }
@@ -68,7 +68,7 @@ namespace ServerGuard
                     if (!userdata.isbanned) return;
                     webclient.Headers[HttpRequestHeader.ContentType] = "application/json";
                     WebhookGeneration jsondata = new WebhookGeneration();
-                    jsondata.content = "Warning! A troublemaker has been detected! " + ev.Player.Name + " (" + ev.Player.SteamId + ")";
+                    jsondata.content = plugin.GetTranslation("webhookmsg") + " " + ev.Player.Name + " (" + ev.Player.SteamId + ")";
                     string json = JsonConvert.SerializeObject(jsondata);
                     webclient.UploadString(plugin.GetConfigString("sg_webhookurl"), "POST", json);
                     plugin.Info("Webhook sent");

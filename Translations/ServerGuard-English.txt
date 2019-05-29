@@ -1,0 +1,3 @@
+﻿kickmessage: You have been banned my ServerGuard.
+ingamemsg: Warning troublemaker detected. Name:
+webhookmsg: Warning! A troublemaker has been detected!

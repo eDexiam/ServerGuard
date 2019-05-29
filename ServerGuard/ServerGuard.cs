@@ -15,6 +15,7 @@ namespace ServerGuard
 		name = "ServerGuard",
 		description = "A banning system for troublemakers",
 		id = "lucas.serverguard.plugin",
+
 		version = "1.2",
 		SmodMajor = 3,
 		SmodMinor = 4,
@@ -24,12 +25,12 @@ namespace ServerGuard
 	{
 		public override void OnDisable()
 		{
-			this.Info("GlobalBans activated");
+			this.Info("ServerGuard activated");
 		}
 
 		public override void OnEnable()
 		{
-			this.Info("GlobalBans deactivated");
+			this.Info("ServerGuard deactivated");
 		}
 
         public override void Register()
@@ -38,6 +39,10 @@ namespace ServerGuard
             this.AddConfig(new ConfigSetting("sg_webhookurl", "", true, "The webhook URL for Discord logging (The auto kick system must be disabled for this to work)"));
             this.AddConfig(new ConfigSetting("sg_enableautokick", true, true, "Disallow access to users on the troublemakers database"));
             this.AddConfig(new ConfigSetting("sg_notifyroles", new string[] { }, true, "Put a list of staff roles to notify in-game when a troublemaker has joined (The auto kick system must be disabled for this to work)"));
+            string lang = "ServerGuard";
+            this.AddTranslation(new LangSetting("kickmessage", "You are banned by ServerGuard.", lang));
+            this.AddTranslation(new LangSetting("ingamemsg:", "Warning troublemaker detected. Name:", lang));
+            this.AddTranslation(new LangSetting("webhookmsg:", "Warning! A troublemaker has been detected!", lang));
         }
 	}
 }

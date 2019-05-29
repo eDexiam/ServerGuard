@@ -1,0 +1,3 @@
+﻿kickmessage: Ты был забанен плагином ServerGuard.
+ingamemsg: Warning troublemaker detected. Name:
+webhookmsg: Warning! A troublemaker has been detected!
