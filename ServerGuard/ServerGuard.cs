@@ -41,8 +41,8 @@ namespace ServerGuard
             this.AddConfig(new ConfigSetting("sg_doorhackdetection", false, true, "Phasing trough door protection (May impact server performance heavily further testing required)"));
             string lang = "ServerGuard";
             this.AddTranslation(new LangSetting("kickmessage", "You are banned by ServerGuard.", lang));
-            this.AddTranslation(new LangSetting("ingamemsg:", "Warning troublemaker detected. Name:", lang));
-            this.AddTranslation(new LangSetting("webhookmsg:", "Warning! A troublemaker has been detected!", lang));
+            this.AddTranslation(new LangSetting("ingamemsg", "Warning troublemaker detected. Name:", lang));
+            this.AddTranslation(new LangSetting("webhookmsg", "Warning! A troublemaker has been detected!", lang));
         }
 	}
 }
