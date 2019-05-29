@@ -8,7 +8,8 @@ It checks if a the user is in a ban database and kicks them if they are
 
 # Translations? Configs? Anything?
 
-Translations are not available yet however you can contribute to them if you'd like.
+Just get the correct translation for your server and rename the file to ServerGuard (remove the language name in the file).
+To contribute to the translations fork the repository do your changes and make a pull request!
 
 __Configs__
 
