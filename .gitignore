@@ -22,3 +22,4 @@ ServerGuard/obj/Debug/ServerGuard.csproj.CopyComplete
 .vs/ServerGuard/v16/Server/sqlite3/storage.ide-wal
 Builds/ServerGuard.pdb
 ServerGuard/obj/Debug/ServerGuard.pdb
+ServerGuard/obj/Debug/build.force
