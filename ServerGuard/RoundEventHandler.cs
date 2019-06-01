@@ -166,6 +166,7 @@ namespace ServerGuard
             {
                 Doorlist.Add(door);
             }
+            Vector ClassDSpawn = new Vector(32, 2, 41);
             while (RoundInProgress)
             {
                 yield return Timing.WaitForSeconds(0.000001f);
@@ -177,10 +178,10 @@ namespace ServerGuard
                     {
                         Door component = (Door)door.GetComponent();
 
-                        if (Mathf.Sqrt((player.GetPosition() - door.Position).SqrMagnitude) < 1.389f)
+                        if (Mathf.Sqrt((player.GetPosition() - door.Position).SqrMagnitude) < 1.389f && Mathf.Sqrt((player.GetPosition() - ClassDSpawn).SqrMagnitude) > 19)
                         {
-                            // plugin.Info(component.moving.moving.ToString() + player + " Doortype & name " + component.doorType + " " + component.DoorName);
-                            if (component.moving.moving == false && door.Open == false && door.Destroyed == false && player.TeamRole.Role != Role.SCP_106)
+                           //plugin.Info(component.moving.moving.ToString() + player + " Doortype & name " + component.doorType + " " + component.DoorName);
+                           if (component.moving.moving == false && door.Open == false && door.Destroyed == false && player.TeamRole.Role != Role.SCP_106)
                             {
                                 Sense += 1;
                                 if (Sense >= 3)
@@ -188,10 +189,11 @@ namespace ServerGuard
                                     player.Kill(DamageType.FLYING);
                                     Sense = 0;
                                 }
-                            } else if(component.moving.moving == true && door.Open == false && door.Destroyed == false)
+                            }
+                            else if (component.moving.moving == true && door.Open == false && door.Destroyed == false)
                             {
                                 if (Sense == 0) return;
-                                
+
                                 Sense -= 1;
                             }
                         }
