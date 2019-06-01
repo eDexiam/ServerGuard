@@ -178,7 +178,7 @@ namespace ServerGuard
                     {
                         Door component = (Door)door.GetComponent();
 
-                        if (Mathf.Sqrt((player.GetPosition() - door.Position).SqrMagnitude) < 1.389f && Mathf.Sqrt((player.GetPosition() - ClassDSpawn).SqrMagnitude) > 19)
+                        if (Mathf.Sqrt((player.GetPosition() - door.Position).SqrMagnitude) < 1.39f && Mathf.Sqrt((player.GetPosition() - ClassDSpawn).SqrMagnitude) > 19)
                         {
                            //plugin.Info(component.moving.moving.ToString() + player + " Doortype & name " + component.doorType + " " + component.DoorName);
                            if (component.moving.moving == false && door.Open == false && door.Destroyed == false && player.TeamRole.Role != Role.SCP_106)
