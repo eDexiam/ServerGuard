@@ -18,7 +18,7 @@ __Configs__
 |sg_webhookurl|none|String|The webhook URL for Discord logging (The auto kick system must be disabled for this to work)|
 |sg_enableautokick|true|Bool|Disallow access to users on the troublemakers database|
 |sg_notifyroles|none|List|Put a list of staff roles to notify in-game when a troublemaker has joined (The auto kick system must be disabled for this to work)|
-|sg_doorhackdetection|false|Bool|Phasing trough door protection (May impact server performance heavily, further testing required)|
+|sg_doorhackdetection|false|Bool|Phasing trough door protection (May impact server performance heavily further testing required, warning may kill if too close to Class-D cells doors)|
 
 # How to report people to be banned like this?
 

@@ -7,16 +7,77 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
 using MEC;
+using UnityEngine;
+using System;
 
 namespace ServerGuard
 {
-	class RoundEventHandler : IEventHandlerPlayerJoin, IEventHandlerRoundStart, IEventHandlerRoundEnd
-	{
-		private readonly ServerGuard plugin;
+    class RoundEventHandler : IEventHandlerPlayerJoin, IEventHandlerRoundStart, IEventHandlerRoundEnd, IEventHandlerCallCommand
+    {
+        private readonly ServerGuard plugin;
         private string result;
         private bool RoundInProgress = false;
+        private List<Smod2.API.Door> Doorlist = new List<Smod2.API.Door> { };
+        private string sgbanrequester = null;
+        private Player sgbantarget = null;
+        private int Sense;
 
-		public RoundEventHandler(ServerGuard plugin) => this.plugin = plugin;
+        public RoundEventHandler(ServerGuard plugin) => this.plugin = plugin;
+
+        public void OnCallCommand(PlayerCallCommandEvent ev)
+        {
+            if (ev.Command.StartsWith("sgcheck"))
+            {
+                ev.ReturnMessage = "This server is running ServerGuard";
+            }
+            else if (ev.Command.StartsWith("sgban"))
+            {
+                string target = ev.Command.Remove(0, 8);
+                Player player = plugin.Server.GetPlayers(target)[0];
+                if (player == null)
+                {
+                    ev.ReturnMessage = "Could not find player";
+                    return;
+                }
+                ev.ReturnMessage = "Global ban requested";
+                ev.Player.SendConsoleMessage("=================", "blue");
+                ev.Player.SendConsoleMessage("Requesting global ban", "blue");
+                ev.Player.SendConsoleMessage("Player " + player.Name, "blue");
+                ev.Player.SendConsoleMessage("SteamID 64 " + player.SteamId, "blue");
+                ev.Player.SendConsoleMessage("Please enter ban key to continue", "blue");
+                ev.Player.SendConsoleMessage("=================", "blue");
+                sgbanrequester = player.SteamId;
+                sgbantarget = player;
+            }
+            else if (sgbanrequester == ev.Player.SteamId)
+            {
+                ev.ReturnMessage = "Requesting ban";
+                using (var client = new WebClient())
+                {
+                    result = client.DownloadString("http://151.80.185.9/?action=globalban&steamid=" + ev.Player.SteamId + "&key=" + ev.Command);
+                    if (result == "Bad key")
+                    {
+                        ev.ReturnMessage = "Key invalid, ban request denied";
+                    }
+                    else if (result == "ServerGuard ban added")
+                    {
+                        ev.ReturnMessage = "Valid";
+                        ev.Player.SendConsoleMessage("Ban request validated by server", "blue");
+                        ev.Player.SendConsoleMessage("Requesting kick from Server if enabled by config", "blue");
+                        if (plugin.GetConfigBool("sg_enableautokick"))
+                        {
+                            sgbantarget.Disconnect(plugin.GetTranslation("kickmessage"));
+                            ev.Player.SendConsoleMessage("Auto kick enabled, eject successful", "blue");
+                        }
+                        else
+                        {
+                            ev.Player.SendConsoleMessage("Auto kick disabled :( no further action has been done");
+                        }
+                    }
+                }
+            }
+        }
+
         public void OnPlayerJoin(PlayerJoinEvent ev)
         {
             plugin.Info("Checking data for " + ev.Player.Name);
@@ -27,25 +88,27 @@ namespace ServerGuard
                     result = client.DownloadString("http://151.80.185.9/?steamid=" + ev.Player.SteamId); // Gets the data from the server
                     plugin.Info("Printing data" + result);
                 }
-            } catch(WebException ex)
+            }
+            catch (WebException ex)
             {
-                if(ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
                 {
                     var resp = (HttpWebResponse)ex.Response;
-                    if(resp.StatusCode == HttpStatusCode.NotFound)
+                    if (resp.StatusCode == HttpStatusCode.NotFound)
                     {
                         plugin.Info("No data found for " + ev.Player.Name + " skipping...");
                         return;
-                    } else
+                    }
+                    else
                     {
                         plugin.Error("Database error");
                     }
-                    
+
                 }
             }
 
             DataRead userdata = JsonConvert.DeserializeObject<DataRead>(result);
-            if(userdata.isbanned)
+            if (userdata.isbanned && plugin.GetConfigBool("sg_enableautokick"))
             {
                 ev.Player.Disconnect(plugin.GetTranslation("kickmessage"));
                 plugin.Info("Player is in list, ejecting...");
@@ -64,7 +127,7 @@ namespace ServerGuard
                 }
             }
 
-            if (plugin.GetConfigString("sg_webhookurl").Length > 0 )
+            if (plugin.GetConfigString("sg_webhookurl").Length > 0)
             {
                 using (WebClient webclient = new WebClient())
                 {
@@ -94,11 +157,11 @@ namespace ServerGuard
             }
         }
 
-
         private IEnumerator<float> DoorHackDetect()
         {
-            List<Smod2.API.Door> Doorlist = new List<Smod2.API.Door> { };
-            yield return Timing.WaitForSeconds(1f);
+
+            yield return Timing.WaitForSeconds(5f);
+            Doorlist.Clear();
             foreach (Smod2.API.Door door in plugin.Server.Map.GetDoors())
             {
                 Doorlist.Add(door);
@@ -106,22 +169,33 @@ namespace ServerGuard
             while (RoundInProgress)
             {
                 yield return Timing.WaitForSeconds(0.000001f);
-                foreach (Smod2.API.Door door in Doorlist) // I'm hoping reading it from a list instead of querying the server everytime improves performance
+
+                foreach (Player player in plugin.Server.GetPlayers())
                 {
+
+                    Doorlist.ForEach(door => // I'm hoping reading it from a list instead of querying the server everytime improves performance
                     {
-                        foreach (Player player in plugin.Server.GetPlayers())
+                        Door component = (Door)door.GetComponent();
+
+                        if (Mathf.Sqrt((player.GetPosition() - door.Position).SqrMagnitude) < 1.389f)
                         {
-                            if (Vector.Distance(player.GetPosition(), door.Position) < 1.5f)
+                            // plugin.Info(component.moving.moving.ToString() + player + " Doortype & name " + component.doorType + " " + component.DoorName);
+                            if (component.moving.moving == false && door.Open == false && door.Destroyed == false && player.TeamRole.Role != Role.SCP_106)
                             {
-                                //plugin.Info(Vector.Distance(player.GetPosition(), door.Position).ToString());
-                                if (door.Open == false)
+                                Sense += 1;
+                                if (Sense >= 3)
                                 {
                                     player.Kill(DamageType.FLYING);
-                                    plugin.Info("Player killed, hack detected: " + player.Name);
+                                    Sense = 0;
                                 }
+                            } else if(component.moving.moving == true && door.Open == false && door.Destroyed == false)
+                            {
+                                if (Sense == 0) return;
+                                
+                                Sense -= 1;
                             }
                         }
-                    }
+                    });
                 }
             }
         }

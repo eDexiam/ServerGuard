@@ -15,7 +15,7 @@ namespace ServerGuard
 		name = "ServerGuard",
 		description = "A banning system for troublemakers",
 		id = "lucas.serverguard.plugin",
-		version = "1.4",
+		version = "1.5-Beta",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
@@ -24,12 +24,12 @@ namespace ServerGuard
 	{
 		public override void OnDisable()
 		{
-			this.Info("ServerGuard activated");
+			this.Info("ServerGuard " + this.Details.version + " disabled");
 		}
 
 		public override void OnEnable()
 		{
-			this.Info("ServerGuard deactivated");
+			this.Info("ServerGuard " + this.Details.version + " enabled");
 		}
 
         public override void Register()
@@ -38,7 +38,7 @@ namespace ServerGuard
             this.AddConfig(new ConfigSetting("sg_webhookurl", "", true, "The webhook URL for Discord logging (The auto kick system must be disabled for this to work)"));
             this.AddConfig(new ConfigSetting("sg_enableautokick", true, true, "Disallow access to users on the troublemakers database"));
             this.AddConfig(new ConfigSetting("sg_notifyroles", new string[] { }, true, "Put a list of staff roles to notify in-game when a troublemaker has joined (The auto kick system must be disabled for this to work)"));
-            this.AddConfig(new ConfigSetting("sg_doorhackdetection", false, true, "Phasing trough door protection (May impact server performance heavily further testing required)"));
+            this.AddConfig(new ConfigSetting("sg_doorhackdetection", false, true, "Phasing trough door protection (May impact server performance heavily further testing required, warning may kill if too close to Class-D cells doors)"));
             string lang = "ServerGuard";
             this.AddTranslation(new LangSetting("kickmessage", "You are banned by ServerGuard.", lang));
             this.AddTranslation(new LangSetting("ingamemsg", "Warning troublemaker detected. Name:", lang));
