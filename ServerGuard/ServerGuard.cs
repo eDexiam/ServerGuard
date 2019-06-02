@@ -39,8 +39,9 @@ namespace ServerGuard
             this.AddConfig(new ConfigSetting("sg_enableautokick", true, true, "Disallow access to users on the troublemakers database"));
             this.AddConfig(new ConfigSetting("sg_notifyroles", new string[] { }, true, "Put a list of staff roles to notify in-game when a troublemaker has joined (The auto kick system must be disabled for this to work)"));
             this.AddConfig(new ConfigSetting("sg_doorhackdetection", false, true, "Phasing trough door protection (May impact server performance heavily further testing required, warning may kill if too close to Class-D cells doors)"));
+            this.AddConfig(new ConfigSetting("sg_triggerreason", new string[] { "Hacking", "Toxic", "Troll/Grief" }, true, "Reasons that triggers the autokick / troublemaker notification (Available reasons: Hacking, Teamkill, Freekill, Slurs, Toxic, Troll/Grief)"));
             string lang = "ServerGuard";
-            this.AddTranslation(new LangSetting("kickmessage", "You are banned by ServerGuard.", lang));
+            this.AddTranslation(new LangSetting("kickmessage", "You are banned by ServerGuard. \n For assistance please visit the ServerGuard discord: \n https://discord.gg/NDeZzyz", lang));
             this.AddTranslation(new LangSetting("ingamemsg", "Warning troublemaker detected. Name:", lang));
             this.AddTranslation(new LangSetting("webhookmsg", "Warning! A troublemaker has been detected!", lang));
         }

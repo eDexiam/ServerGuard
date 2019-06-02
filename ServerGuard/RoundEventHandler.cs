@@ -20,12 +20,19 @@ namespace ServerGuard
         private List<Smod2.API.Door> Doorlist = new List<Smod2.API.Door> { };
         private string sgbanrequester = null;
         private Player sgbantarget = null;
+        private bool AwaitingSgReason = false;
+        private string SgBanReason;
         private int Sense;
 
         public RoundEventHandler(ServerGuard plugin) => this.plugin = plugin;
 
         public void OnCallCommand(PlayerCallCommandEvent ev)
         {
+            /*if(ev.Command.StartsWith("ovr"))
+            {
+                if(ev.Player.OverwatchMode == true) ev.Player.OverwatchMode = false;
+                if (ev.Player.OverwatchMode == false) ev.Player.OverwatchMode = true;
+            }*/
             if (ev.Command.StartsWith("sgcheck"))
             {
                 ev.ReturnMessage = "This server is running ServerGuard";
@@ -44,20 +51,35 @@ namespace ServerGuard
                 ev.Player.SendConsoleMessage("Requesting global ban", "blue");
                 ev.Player.SendConsoleMessage("Player " + player.Name, "blue");
                 ev.Player.SendConsoleMessage("SteamID 64 " + player.SteamId, "blue");
-                ev.Player.SendConsoleMessage("Please enter ban key to continue", "blue");
+                ev.Player.SendConsoleMessage("Please enter reason to continue", "blue");
                 ev.Player.SendConsoleMessage("=================", "blue");
                 sgbanrequester = player.SteamId;
                 sgbantarget = player;
+                AwaitingSgReason = true;
+            } else if(AwaitingSgReason == true)
+            {
+                SgBanReason = ev.Command;
+                ev.ReturnMessage = "Reason added";
+                ev.Player.SendConsoleMessage("=================", "blue");
+                ev.Player.SendConsoleMessage("Requesting global ban", "blue");
+                ev.Player.SendConsoleMessage("Player " + sgbantarget.Name, "blue");
+                ev.Player.SendConsoleMessage("SteamID 64 " + sgbantarget.SteamId, "blue");
+                ev.Player.SendConsoleMessage("Reason: " + SgBanReason, "blue");
+                ev.Player.SendConsoleMessage("Enter ban key to continue", "blue");
+                ev.Player.SendConsoleMessage("=================", "blue");
+                AwaitingSgReason = false;
             }
             else if (sgbanrequester == ev.Player.SteamId)
             {
                 ev.ReturnMessage = "Requesting ban";
                 using (var client = new WebClient())
                 {
-                    result = client.DownloadString("http://151.80.185.9/?action=globalban&steamid=" + ev.Player.SteamId + "&key=" + ev.Command);
+                    result = client.DownloadString("http://151.80.185.9/?action=globalban&steamid=" + ev.Player.SteamId + "&key=" + ev.Command + "&banreason=" + SgBanReason);
                     if (result == "Bad key")
                     {
                         ev.ReturnMessage = "Key invalid, ban request denied";
+                        sgbanrequester = null;
+                        sgbantarget = null;
                     }
                     else if (result == "ServerGuard ban added")
                     {
@@ -66,13 +88,25 @@ namespace ServerGuard
                         ev.Player.SendConsoleMessage("Requesting kick from Server if enabled by config", "blue");
                         if (plugin.GetConfigBool("sg_enableautokick"))
                         {
-                            sgbantarget.Disconnect(plugin.GetTranslation("kickmessage"));
-                            ev.Player.SendConsoleMessage("Auto kick enabled, eject successful", "blue");
+                            if (plugin.GetConfigList("sg_triggerreason").Contains(SgBanReason))
+                            {
+                                sgbantarget.Disconnect(plugin.GetTranslation("kickmessage"));
+                                ev.Player.SendConsoleMessage("Auto kick enabled, eject successful", "blue");
+                                return;
+                            }
+                            ev.Player.SendConsoleMessage("Auto kick enabled, player is not in the server trigger category", "blue");
                         }
                         else
                         {
                             ev.Player.SendConsoleMessage("Auto kick disabled :( no further action has been done");
                         }
+                        sgbanrequester = null;
+                        sgbantarget = null;
+                    } else if(result == "Bad reason")
+                    {
+                        ev.ReturnMessage = "Error bad reason supplied";
+                        sgbanrequester = null;
+                        sgbantarget = null;
                     }
                 }
             }
@@ -86,7 +120,6 @@ namespace ServerGuard
                 using (var client = new WebClient())
                 {
                     result = client.DownloadString("http://151.80.185.9/?steamid=" + ev.Player.SteamId); // Gets the data from the server
-                    plugin.Info("Printing data" + result);
                 }
             }
             catch (WebException ex)
@@ -110,11 +143,16 @@ namespace ServerGuard
             DataRead userdata = JsonConvert.DeserializeObject<DataRead>(result);
             if (userdata.isbanned && plugin.GetConfigBool("sg_enableautokick"))
             {
-                ev.Player.Disconnect(plugin.GetTranslation("kickmessage"));
-                plugin.Info("Player is in list, ejecting...");
-                return;
+                char[] splitchar = { ' ' };
+                if (plugin.GetConfigList("sg_triggerreason").Any(x => userdata.Reason.Split(splitchar).Contains(x)))
+                {
+                    ev.Player.Disconnect(plugin.GetTranslation("kickmessage"));
+                    plugin.Info("Player is in list, ejecting...");
+                    return;
+                }
             }
             plugin.Info("Player is not banned");
+            if (plugin.GetConfigBool("sg_enableautokick")) return;
 
             if (plugin.GetConfigList("sg_notifyroles").Length != 0)
             {

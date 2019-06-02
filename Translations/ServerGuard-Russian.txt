@@ -1,3 +1,3 @@
-﻿kickmessage: Ты был забанен плагином ServerGuard.
+﻿kickmessage: Ты был забанен плагином ServerGuard. \n For assistance please visit the ServerGuard discord: \n https://discord.gg/NDeZzyz
 ingamemsg:: Предупреждение нарушитель правопорядка найден. Ник:
 webhookmsg:: Предупреждение! Нарушитель правопорядка найден!
