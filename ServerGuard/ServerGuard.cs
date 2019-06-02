@@ -15,7 +15,7 @@ namespace ServerGuard
 		name = "ServerGuard",
 		description = "A banning system for troublemakers",
 		id = "lucas.serverguard.plugin",
-		version = "1.5.1",
+		version = "1.6",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
