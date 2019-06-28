@@ -12,6 +12,16 @@ using System;
 
 namespace ServerGuard
 {
+    public class WebClientWithTimeout : WebClient
+    {
+        protected override WebRequest GetWebRequest(Uri address)
+        {
+            WebRequest wr = base.GetWebRequest(address);
+            wr.Timeout = 5000; // timeout in milliseconds (ms)
+            return wr;
+        }
+    }
+
     class RoundEventHandler : IEventHandlerPlayerJoin, IEventHandlerRoundStart, IEventHandlerRoundEnd, IEventHandlerCallCommand
     {
         private readonly ServerGuard plugin;
@@ -72,7 +82,7 @@ namespace ServerGuard
             else if (sgbanrequester == ev.Player.SteamId)
             {
                 ev.ReturnMessage = "Requesting ban";
-                using (var client = new WebClient())
+                using (var client = new System.Net.WebClient())
                 {
                     result = client.DownloadString("http://151.80.185.9/?action=globalban&steamid=" + ev.Player.SteamId + "&key=" + ev.Command + "&banreason=" + SgBanReason);
                     if (result == "Bad key")
@@ -107,6 +117,9 @@ namespace ServerGuard
                         ev.ReturnMessage = "Error bad reason supplied";
                         sgbanrequester = null;
                         sgbantarget = null;
+                    } else
+                    {
+                        ev.ReturnMessage = "Error, debug " + sgbanrequester;
                     }
                 }
             }
@@ -117,7 +130,7 @@ namespace ServerGuard
             plugin.Info("Checking data for " + ev.Player.Name);
             try
             {
-                using (var client = new WebClient())
+                using (var client = new WebClientWithTimeout())
                 {
                     result = client.DownloadString("http://151.80.185.9/?steamid=" + ev.Player.SteamId); // Gets the data from the server
                 }
@@ -135,8 +148,13 @@ namespace ServerGuard
                     else
                     {
                         plugin.Error("Database error");
+                        return;
                     }
 
+                } else
+                {
+                    plugin.Error("Unable to contact database");
+                    return;
                 }
             }
 
@@ -167,7 +185,7 @@ namespace ServerGuard
 
             if (plugin.GetConfigString("sg_webhookurl").Length > 0)
             {
-                using (WebClient webclient = new WebClient())
+                using (System.Net.WebClient webclient = new System.Net.WebClient())
                 {
                     if (!userdata.isbanned) return;
                     webclient.Headers[HttpRequestHeader.ContentType] = "application/json";
